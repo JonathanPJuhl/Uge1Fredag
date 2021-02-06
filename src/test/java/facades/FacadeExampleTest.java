@@ -1,11 +1,14 @@
 package facades;
 
+import dto.CustomerDTO;
+import entities.BankCustomer;
 import utils.EMF_Creator;
-import entities.RenameMe;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,9 +42,9 @@ public class FacadeExampleTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-            em.persist(new RenameMe("Some txt", "More text"));
-            em.persist(new RenameMe("aaa", "bbb"));
+            em.createNamedQuery("BankCustomer.deleteAllRows").executeUpdate();
+            em.persist(new BankCustomer("Mare45", "Ridt2", "aax45678", 10, 10, " Han er mindre dumb"));
+            em.persist(new BankCustomer("Mare46", "Ridt2", "aax45678", 10, 10, " Han er mindre dumb"));
 
             em.getTransaction().commit();
         } finally {
@@ -55,9 +58,34 @@ public class FacadeExampleTest {
     }
 
     // TODO: Delete or change this method 
-    @Test
-    public void testAFacadeMethod() {
-        assertEquals(2, facade.getRenameMeCount(), "Expects two rows in the database");
+  @Test
+    public void testOfAddAndFindCustomerCount() {
+        BankCustomer customer = new BankCustomer("Mare4", "Ridt2", "aax45678", 10, 10, " Han er mindre dumb");
+        BankCustomer add = facade.addCustomer(customer);
+        List<BankCustomer> count = facade.getAllCustomers();
+        int expected = 3;
+        int actual = count.size();
+        assertEquals( expected, actual, "Expects the same output of employee from the database");
+   
     }
-
+    @Test
+    public void testOfFindCustomerByName() {
+        BankCustomer customer = new BankCustomer("Mare4", "Ridt2", "aax45678", 10, 10, " Han er mindre dumb");
+        facade.addCustomer(customer);
+        facade.addCustomer(customer);
+        List<CustomerDTO> list = facade.getCustomersByName("Mare4 Ridt2");
+        int actual = list.size();
+        int expected = 2;
+        assertEquals( expected, actual, "Expects the same output of nr of employees from the database");
+   
+    }
+     @Test
+    public void testOfFindCustomerByID() {
+        BankCustomer customer = new BankCustomer("Mare4444", "Ridt2", "aax45678", 10, 10, " Han er mindre dumb");
+        BankCustomer cust = facade.addCustomer(customer);
+        CustomerDTO cust1 = facade.getCustomerByID(cust.getId());
+         Assertions.assertTrue(cust1!=null); 
+   
+    }
+   
 }
